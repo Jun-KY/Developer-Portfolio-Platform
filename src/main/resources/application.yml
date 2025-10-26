@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: developer-portfolio-platform
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    root: INFO
