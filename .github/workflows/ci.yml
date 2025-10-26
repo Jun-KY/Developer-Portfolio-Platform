@@ -70,10 +70,25 @@ jobs:
           echo "SPRING_DATASOURCE_USERNAME=appuser" >> $GITHUB_ENV
           echo "SPRING_DATASOURCE_PASSWORD=apppass" >> $GITHUB_ENV
 
+      - name: Configure AWS env for tests (dummy)
+        if: steps.detect_backend.outputs.tool != 'none'
+        run: |
+          echo "AWS_ACCESS_KEY_ID=dummy" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=dummy" >> $GITHUB_ENV
+          echo "AWS_REGION=ap-northeast-2" >> $GITHUB_ENV
+
       - name: Build & Test (Maven)
         if: steps.detect_backend.outputs.tool == 'maven'
         working-directory: ${{ steps.detect_backend.outputs.dir }}
         run: mvn -B -q -Dspring.profiles.active=test clean verify
+
+      - name: Make gradlew executable if present
+        if: steps.detect_backend.outputs.tool == 'gradle'
+        working-directory: ${{ steps.detect_backend.outputs.dir }}
+        run: |
+          if [ -f "./gradlew" ]; then
+            chmod +x ./gradlew
+          fi
 
       - name: Build & Test (Gradle)
         if: steps.detect_backend.outputs.tool == 'gradle'
