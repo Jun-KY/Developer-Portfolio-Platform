@@ -1,8 +1,19 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/appdb
-    username: appuser
-    password: apppass
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/appdb}
+    username: ${SPRING_DATASOURCE_USERNAME:appuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:apppass}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    root: INFO
