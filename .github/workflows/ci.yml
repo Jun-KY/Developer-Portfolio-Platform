@@ -96,6 +96,22 @@ jobs:
         run: |
           [ -x "./gradlew" ] || echo "Gradle wrapper not found; trying system gradle if available"
           ./gradlew -Dspring.profiles.active=test clean build test --no-daemon || gradle -Dspring.profiles.active=test clean build test
+      - name: Report commit status (success/failure)
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conclusion = '${{ job.status }}'; // success | failure | cancelled
+            const state = conclusion === 'success' ? 'success' :
+                          conclusion === 'cancelled' ? 'error' : 'failure';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state,
+              context: 'ci/${{ matrix.name || job.name }}',
+              description: `Job ${'${{ job.name }}'}: ${conclusion}`
+            });
 
   frontend:
     name: Frontend Build (auto-detect)
@@ -163,3 +179,19 @@ jobs:
         working-directory: ${{ steps.detect_fe.outputs.path }}
         run: |
           npm run build || npm run build:prod || echo "No build script, skipping"
+      - name: Report commit status (success/failure)
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conclusion = '${{ job.status }}'; // success | failure | cancelled
+            const state = conclusion === 'success' ? 'success' :
+                          conclusion === 'cancelled' ? 'error' : 'failure';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state,
+              context: 'ci/${{ matrix.name || job.name }}',
+              description: `Job ${'${{ job.name }}'}: ${conclusion}`
+            });
