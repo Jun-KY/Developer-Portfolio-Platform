@@ -121,7 +121,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # 캐시는 락파일이 있을 때만 별도 캐시 스텝으로 처리 (에러 방지)
       
       - name: Cache node_modules (when lockfile exists)
         if: steps.detect_fe.outputs.found == 'true' && steps.detect_fe.outputs.lock == 'true'
